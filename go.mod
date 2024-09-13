@@ -1,4 +1,4 @@
-module easy_json
+module github.com/mytempoesp/easy_json
 
 go 1.22.3
 
