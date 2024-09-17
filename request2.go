@@ -76,6 +76,74 @@ func CheckForSuccessMessage(body []byte) (err error) {
 
 /*
 	By Rodrigo Monteiro Junior
+	Last modified: ter 17 set 2024 14:43:40 -03
+
+Execute an HTTP POST request to a JSON api,
+passing a JSON form with no response.
+
+this function retries to make the request up to 20 seconds
+using a backoff algorithm.
+*/
+func SimpleRawRequest(url string, data RawForm, contentType string) (err error) {
+
+	var res *http.Response
+
+	req, err := http.NewRequest("POST", url, bytes.NewBuffer(data))
+
+	if err != nil {
+		err = fmt.Errorf("Error creating request: %s\n", err)
+
+		return
+	}
+
+	req.Header.Set("Content-Type", contentType)
+
+	bf := backoff.NewExponentialBackOff()
+	bf.MaxElapsedTime = REQUEST_TIMEOUT
+
+	err = backoff.Retry(
+		func() (err error) {
+			res, err = http.DefaultClient.Do(req)
+
+			/* FIXME: remove excessive loggin */
+			if err != nil {
+				log.Println("Error sending request:", err)
+			}
+
+			return
+		},
+
+		bf,
+	)
+
+	if err != nil {
+		return
+	}
+
+	defer res.Body.Close()
+
+	if res.StatusCode != http.StatusOK {
+		err = fmt.Errorf("Error connecting to '%s': got HTTP %d\n", url, res.StatusCode)
+
+		return
+	}
+
+	body, err := io.ReadAll(res.Body)
+
+	if err != nil {
+		err = fmt.Errorf("Error reading response body: %s\n", err)
+
+		return
+	}
+
+	// NOTE: You can comment out this section safely
+	err = CheckForSuccessMessage(body)
+
+	return
+}
+
+/*
+	By Rodrigo Monteiro Junior
 	Last modified in:                   • ter 27 ago 2024 15:30:34 -03
 			  ( we're here -> ) • sex 13 set 2024 08:34:42 -03
 
