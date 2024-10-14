@@ -88,21 +88,21 @@ func SimpleRawRequest(url string, data RawForm, contentType string) (err error) 
 
 	var res *http.Response
 
-	req, err := http.NewRequest("POST", url, bytes.NewBuffer(data))
-
-	if err != nil {
-		err = fmt.Errorf("Error creating request: %s\n", err)
-
-		return
-	}
-
-	req.Header.Set("Content-Type", contentType)
-
 	bf := backoff.NewExponentialBackOff()
 	bf.MaxElapsedTime = REQUEST_TIMEOUT
 
 	err = backoff.Retry(
 		func() (err error) {
+			req, err := http.NewRequest("POST", url, bytes.NewBuffer(data))
+
+			if err != nil {
+				err = fmt.Errorf("Error creating request: %s\n", err)
+
+				return
+			}
+
+			req.Header.Set("Content-Type", contentType)
+
 			res, err = http.DefaultClient.Do(req)
 
 			/* FIXME: remove excessive loggin */
@@ -173,21 +173,22 @@ func RawRequest(url string, data RawForm, jsonOutput interface{}) (err error) {
 
 	var res *http.Response
 
-	req, err := http.NewRequest("POST", url, bytes.NewBuffer(data))
-
-	if err != nil {
-		err = fmt.Errorf("Error creating request: %s\n", err)
-
-		return
-	}
-
-	req.Header.Set("Content-Type", "application/json")
-
 	bf := backoff.NewExponentialBackOff()
 	bf.MaxElapsedTime = REQUEST_TIMEOUT
 
 	err = backoff.Retry(
 		func() (err error) {
+
+			req, err := http.NewRequest("POST", url, bytes.NewBuffer(data))
+
+			if err != nil {
+				err = fmt.Errorf("Error creating request: %s\n", err)
+
+				return
+			}
+
+			req.Header.Set("Content-Type", "application/json")
+
 			res, err = http.DefaultClient.Do(req)
 
 			/* FIXME: remove excessive loggin */
@@ -283,21 +284,22 @@ func JSONRequest(url string, data Form, jsonOutput interface{}) (err error) {
 		return
 	}
 
-	req, err := http.NewRequest("POST", url, bytes.NewBuffer(jsonData))
-
-	if err != nil {
-		err = fmt.Errorf("Error creating request: %s\n", err)
-
-		return
-	}
-
-	req.Header.Set("Content-Type", "application/json")
-
 	bf := backoff.NewExponentialBackOff()
 	bf.MaxElapsedTime = REQUEST_TIMEOUT
 
 	err = backoff.Retry(
 		func() (err error) {
+
+			req, err := http.NewRequest("POST", url, bytes.NewBuffer(jsonData))
+
+			if err != nil {
+				err = fmt.Errorf("Error creating request: %s\n", err)
+
+				return
+			}
+
+			req.Header.Set("Content-Type", "application/json")
+
 			res, err = http.DefaultClient.Do(req)
 
 			if err != nil {
@@ -369,21 +371,22 @@ func JSONSimpleRequest(url string, data Form) (err error) {
 		return
 	}
 
-	req, err := http.NewRequest("POST", url, bytes.NewBuffer(jsonData))
-
-	if err != nil {
-		err = fmt.Errorf("Error creating request: %s\n", err)
-
-		return
-	}
-
-	req.Header.Set("Content-Type", "application/json")
-
 	bf := backoff.NewExponentialBackOff()
 	bf.MaxElapsedTime = REQUEST_TIMEOUT
 
 	err = backoff.Retry(
 		func() (err error) {
+
+			req, err := http.NewRequest("POST", url, bytes.NewBuffer(jsonData))
+
+			if err != nil {
+				err = fmt.Errorf("Error creating request: %s\n", err)
+
+				return
+			}
+
+			req.Header.Set("Content-Type", "application/json")
+
 			res, err = http.DefaultClient.Do(req)
 
 			if err != nil {
